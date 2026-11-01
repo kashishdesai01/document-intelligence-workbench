@@ -1,0 +1,79 @@
+{
+  "dataset": "synthetic evaluation split (seeds 200\u2013229)",
+  "pipeline": "statement-layout@1",
+  "timestamp": "2026-11-11T16:19:18.652795+00:00",
+  "git_revision": null,
+  "platform": "macOS-27.2.1-arm64-arm-64bit",
+  "source_sha256": "4f0745bfb4d39726c92de1ff465ef943302ac5aa90b48e3831775c954a33a9c5",
+  "tools": {
+    "ocr": "tesseract 5.5.4",
+    "pdfium": "5.15.2",
+    "pillow": "13.0.0"
+  },
+  "ollama_model": null,
+  "variants": {
+    "full": {
+      "documents": 30,
+      "failed": 0,
+      "exact_documents": 25,
+      "document_accuracy": 0.8333333333333334,
+      "cell_f1": 0.99375,
+      "straight_through": 0.8333333333333334,
+      "unsafe_straight_through_documents": 0,
+      "auto_accepted_fields": 940,
+      "wrong_auto_accepted_fields": 0,
+      "auto_accepted_error_rate": 0.0,
+      "source_unmatched_rate": 0.0,
+      "source_values_checked": 750,
+      "prompt_tokens": 0,
+      "generated_tokens": 0,
+      "provider_cost_usd": null,
+      "p95_seconds": 3.049
+    }
+  },
+  "calibration": {
+    "fit_split": "synthetic seeds 100\u2013111",
+    "fit_fields": 380,
+    "fit_blocks": [
+      {
+        "upper": 0.95628784,
+        "correct": 33,
+        "count": 34
+      },
+      {
+        "upper": 1.0,
+        "correct": 345,
+        "count": 346
+      }
+    ],
+    "raw": {
+      "ece": 0.021932134421052497,
+      "bins": [
+        {
+          "bin": 8,
+          "count": 1,
+          "mean_score": 0.8612660200000001,
+          "accuracy": 1.0
+        },
+        {
+          "bin": 9,
+          "count": 949,
+          "mean_score": 0.9729222405479453,
+          "accuracy": 0.9947312961011591
+        }
+      ]
+    },
+    "isotonic": {
+      "ece": 5.583492904315257e-05,
+      "bins": [
+        {
+          "bin": 9,
+          "count": 950,
+          "mean_score": 0.9947926770343063,
+          "accuracy": 0.9947368421052631
+        }
+      ]
+    },
+    "used_for_routing": false
+  }
+}
