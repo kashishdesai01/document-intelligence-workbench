@@ -1,0 +1,109 @@
+{
+  "dataset": "synthetic adapter smoke (seeds 201\u2013202)",
+  "pipeline": "statement-layout@1",
+  "timestamp": "2026-11-11T07:39:21.188096+00:00",
+  "git_revision": null,
+  "platform": "macOS-27.2.1-arm64-arm-64bit",
+  "source_sha256": "e64e25cd237428f60d296de227cd1608f97906791fdabf0bfe5a36158d2dd161",
+  "tools": {
+    "ocr": "tesseract 5.5.4",
+    "pdfium": "5.15.2",
+    "pillow": "13.0.0"
+  },
+  "ollama_model": "qwen2.5vl:3b",
+  "variants": {
+    "full": {
+      "documents": 2,
+      "failed": 0,
+      "exact_documents": 2,
+      "document_accuracy": 1.0,
+      "cell_f1": 1.0,
+      "straight_through": 1.0,
+      "unsafe_straight_through_documents": 0,
+      "auto_accepted_fields": 70,
+      "wrong_auto_accepted_fields": 0,
+      "auto_accepted_error_rate": 0.0,
+      "source_unmatched_rate": 0.0,
+      "source_values_checked": 55,
+      "prompt_tokens": 0,
+      "generated_tokens": 0,
+      "provider_cost_usd": null,
+      "p95_seconds": 3.739
+    },
+    "text_only": {
+      "documents": 2,
+      "failed": 0,
+      "exact_documents": 0,
+      "document_accuracy": 0.0,
+      "cell_f1": 0.8333333333333334,
+      "straight_through": null,
+      "unsafe_straight_through_documents": null,
+      "auto_accepted_fields": null,
+      "wrong_auto_accepted_fields": null,
+      "auto_accepted_error_rate": null,
+      "source_unmatched_rate": 0.0,
+      "source_values_checked": 55,
+      "prompt_tokens": 1631,
+      "generated_tokens": 989,
+      "provider_cost_usd": null,
+      "p95_seconds": 69.169
+    },
+    "vision_llm": {
+      "documents": 2,
+      "failed": 0,
+      "exact_documents": 0,
+      "document_accuracy": 0.0,
+      "cell_f1": 0.8333333333333334,
+      "straight_through": null,
+      "unsafe_straight_through_documents": null,
+      "auto_accepted_fields": null,
+      "wrong_auto_accepted_fields": null,
+      "auto_accepted_error_rate": null,
+      "source_unmatched_rate": 0.0,
+      "source_values_checked": 55,
+      "prompt_tokens": 10690,
+      "generated_tokens": 989,
+      "provider_cost_usd": null,
+      "p95_seconds": 173.623
+    }
+  },
+  "calibration": {
+    "fit_split": "synthetic seeds 100\u2013111",
+    "fit_fields": 380,
+    "fit_blocks": [
+      {
+        "upper": 0.95628784,
+        "correct": 33,
+        "count": 34
+      },
+      {
+        "upper": 1.0,
+        "correct": 345,
+        "count": 346
+      }
+    ],
+    "raw": {
+      "ece": 0.03695276442857143,
+      "bins": [
+        {
+          "bin": 9,
+          "count": 70,
+          "mean_score": 0.9630472355714286,
+          "accuracy": 1.0
+        }
+      ]
+    },
+    "isotonic": {
+      "ece": 0.005163452664302737,
+      "bins": [
+        {
+          "bin": 9,
+          "count": 70,
+          "mean_score": 0.9948365473356973,
+          "accuracy": 1.0
+        }
+      ]
+    },
+    "used_for_routing": false
+  }
+}
