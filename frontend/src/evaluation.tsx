@@ -1,6 +1,7 @@
+import { Activity, ChartNoAxesCombined, Download, FileCheck, ShieldCheck, Table2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Alert, Loading, message } from "./ui";
+import { Alert, Loading, message, PageBanner } from "./ui";
 
 type Metric = {
   documents: number;
@@ -49,31 +50,31 @@ export function Evaluation() {
 
   const full = report?.variants.full;
   const calibration = report?.calibration[series];
-  return <div className="content">
-    <header className="page-heading"><div><h1>Extraction evaluation</h1>
-      <p>Frozen benchmark on generated native and scanned statements.</p></div></header>
+  return <div className="content evaluation-page">
+    <PageBanner title="Extraction evaluation" description="Frozen benchmark on generated native and scanned statements."
+      icon={<ChartNoAxesCombined size={30} />} />
     {error && <Alert>{error}</Alert>}
     {!error && !report && <Loading />}
     {report && full && calibration && <>
       <section className="evaluation-cards" aria-label="Synthetic extraction metrics">
-        <MetricCard label="Document accuracy" value={percent(full.document_accuracy)}
+        <MetricCard icon={FileCheck} label="Document accuracy" value={percent(full.document_accuracy)}
           detail={`${full.exact_documents} of ${full.documents} documents exact`} />
-        <MetricCard label="Straight-through rate" value={percent(full.straight_through)}
+        <MetricCard icon={Activity} label="Straight-through rate" value={percent(full.straight_through)}
           detail="Documents with zero review items" />
-        <MetricCard label="Auto-accepted error" value={percent(full.auto_accepted_error_rate)}
+        <MetricCard icon={ShieldCheck} label="Auto-accepted error" value={percent(full.auto_accepted_error_rate)}
           detail={`${full.wrong_auto_accepted_fields} of ${full.auto_accepted_fields} accepted fields`} />
-        <MetricCard label="Transaction cell F1" value={percent(full.cell_f1)} detail="Exact values in statement order" />
+        <MetricCard icon={Table2} label="Transaction cell F1" value={percent(full.cell_f1)} detail="Exact values in statement order" />
       </section>
       <section className="panel reliability-panel">
         <header className="inspector-header"><div><h2>Reliability by evidence score</h2>
           <p>Expected calibration error {percent(calibration.ece)}</p></div>
-          <div className="actions">
+          <div className="score-toggle" role="group" aria-label="Evidence score series">
             <button className="button small" aria-pressed={series === "raw"} onClick={() => setSeries("raw")}>Raw score</button>
             <button className="button small" aria-pressed={series === "isotonic"} onClick={() => setSeries("isotonic")}>Offline fit</button>
           </div>
         </header>
         <div className="reliability-layout">
-          <ReliabilityChart bins={calibration.bins} />
+          <div className="reliability-plot"><ReliabilityChart bins={calibration.bins} /></div>
           <div className="reliability-data">
             <table><caption>Held-out score bins</caption>
               <thead><tr><th>Mean score</th><th>Accuracy</th><th>Fields</th></tr></thead>
@@ -85,14 +86,20 @@ export function Evaluation() {
           </div>
         </div>
       </section>
-      <p className="evaluation-meta">{report.dataset} · {report.pipeline} · p95 {full.p95_seconds.toFixed(2)} s · {new Date(report.timestamp).toLocaleDateString()}</p>
-      <a className="back" href="/evaluation/frozen.json" download>Download benchmark JSON</a>
+      <footer className="panel evaluation-footer">
+        <div><strong>{report.dataset}</strong>
+          <p className="evaluation-meta">{report.pipeline} · p95 {full.p95_seconds.toFixed(2)} s · {new Date(report.timestamp).toLocaleDateString()}</p></div>
+        <a className="button" href="/evaluation/frozen.json" download><Download size={16} /> Download benchmark JSON</a>
+      </footer>
     </>}
   </div>;
 }
 
-function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return <div className="panel metric-card"><h2>{label}</h2><strong>{value}</strong><p>{detail}</p></div>;
+function MetricCard({ icon: Icon, label, value, detail }: { icon: typeof FileCheck; label: string; value: string; detail: string }) {
+  return <div className="panel metric-card">
+    <span className="workspace-link-icon" aria-hidden="true"><Icon size={17} /></span>
+    <h2>{label}</h2><strong>{value}</strong><p>{detail}</p>
+  </div>;
 }
 
 function ReliabilityChart({ bins }: { bins: Bin[] }) {

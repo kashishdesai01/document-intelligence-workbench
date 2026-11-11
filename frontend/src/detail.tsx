@@ -174,11 +174,15 @@ export function Detail({ api, id }: { api: Client; id: string }) {
 
   return <div className="content detail-content">
     <Link to="/" className="back"><ArrowLeft size={16} /> Documents</Link>
-    <header className="page-heading detail-heading">
-      <div><div className="title-line"><h1>{doc?.filename ?? "Document"}</h1>{doc && <Status value={doc.status} />}</div>
-        {doc && <p>Bank statement <span className="mid-dot">·</span> {doc.page_count ?? "—"} {doc.page_count === 1 ? "page" : "pages"} <span className="mid-dot">·</span> Uploaded {displayDate(doc.created_at)}</p>}
+    <header className="panel detail-heading">
+      <div className="detail-identity">
+        <span className="file-icon" aria-hidden="true"><FileText size={24} /></span>
+        <div>
+          <div className="title-line"><h1>{doc?.filename ?? "Document"}</h1>{doc && <Status value={doc.status} />}</div>
+          {doc && <p>Bank statement <span className="mid-dot">·</span> {doc.page_count ?? "—"} {doc.page_count === 1 ? "page" : "pages"} <span className="mid-dot">·</span> Uploaded {displayDate(doc.created_at)}</p>}
+        </div>
       </div>
-      {doc && <div className="actions">
+      {doc && <div className="actions document-actions">
         <button className="icon-button bordered" onClick={reprocess} disabled={busy || active(doc.status)} aria-label="Reprocess document" title="Reprocess document"><RefreshCw size={17} /></button>
         <button className="icon-button bordered" onClick={() => setConfirmDelete(!confirmDelete)} disabled={busy} aria-label="Delete document" title="Delete document"><Trash2 size={17} /></button>
         <button className="button" disabled={busy || doc.status !== "completed"} onClick={() => perform(async () => download(await api.export(id, "csv"), "transactions.csv"))}>CSV</button>
@@ -195,7 +199,7 @@ export function Detail({ api, id }: { api: Client; id: string }) {
     {doc && result && !active(doc.status) && doc.status !== "failed" && <>
       {result.issues.length > 0 && <section className="reconciliation" aria-label="Reconciliation issues">
         <CircleAlert size={19} />
-        <div><strong>{result.issues.length} {result.issues.length === 1 ? "issue" : "issues"} to resolve</strong>
+        <div><h2>{result.issues.length} {result.issues.length === 1 ? "issue" : "issues"} to resolve</h2>
           <ul>{result.issues.map((issue, index) => <li key={`${issue.code}-${index}`}>
             {issue.message} {issue.field_keys[0] && <button className="text-button" onClick={() => inspectIssue(issue.field_keys[0])}>Inspect</button>}
             {issue.code === "review_conflict" && issue.conflict_key && <button className="text-button"
@@ -239,14 +243,14 @@ export function Detail({ api, id }: { api: Client; id: string }) {
               <strong>{label(item.event.request.action)} · {label(item.field_key)}</strong>
               <time>{displayDate(item.created_at)}</time>
               <p>{item.event.request.note}</p>
-              {item.event.before?.value !== item.event.after?.value && <p>{item.event.before?.value ?? "Missing"} → {item.event.after?.value ?? "Missing"}</p>}
+              {item.event.before?.value !== item.event.after?.value && <p className="history-change">{item.event.before?.value ?? "Missing"} → {item.event.after?.value ?? "Missing"}</p>}
             </div>)}
             {nextEvent && <button className="button" disabled={busy} onClick={moreEvents}>Load more</button>}
           </div>}
           {selected && tab !== "history" && <form className="edit-panel" onSubmit={correct}>
             <div className="edit-heading"><Pencil size={16} /><h3>{field ? label(field.key) : "Previous review decision"}</h3>{field && <Status value={field.status} />}</div>
             {field && <>
-              {field.evidence[0]?.text && <p className="evidence-text">Source reads <strong>{field.evidence[0].text}</strong></p>}
+              {field.evidence[0]?.text && <p className="evidence-text evidence-quote">Source reads <strong>{field.evidence[0].text}</strong></p>}
               {field.score !== null && <p className="evidence-text">Evidence score {Math.round(field.score * 100)}% · Uncalibrated</p>}
               <label>Value<input value={edit} onChange={(event) => setEdit(event.target.value)} maxLength={300} /></label>
               <button className="button small" type="button" onClick={() => setDrawing(!drawing)}><ScanLine size={15} />

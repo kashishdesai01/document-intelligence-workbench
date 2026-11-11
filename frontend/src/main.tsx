@@ -1,4 +1,4 @@
-import { Braces, ClipboardList, FileStack, FlaskConical, KeyRound, LogOut, ScanLine, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Braces, ClipboardList, FileQuestion, FileStack, FlaskConical, KeyRound, LogOut, ScanLine, ShieldCheck } from "lucide-react";
 import { useMemo, useState, type FormEvent } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Link, NavLink, Route, Routes, useParams } from "react-router-dom";
@@ -7,7 +7,8 @@ import { client, type Client } from "./api";
 import { Detail } from "./detail";
 import { Documents } from "./documents";
 import { Evaluation } from "./evaluation";
-import { Alert, message } from "./ui";
+import { Schema } from "./schema";
+import { Alert, message, ScanPreview } from "./ui";
 import "./styles.css";
 
 const SESSION_KEY = "workbench.workspace-key";
@@ -37,8 +38,11 @@ function Connect({ onConnect }: { onConnect: (key: string) => void }) {
 
   return <main className="connect">
     <div className="connect-inner">
-      <div className="brand"><Brand /></div>
-      <section className="panel connect-card">
+      <div className="connect-preview">
+        <div className="brand"><Brand /></div>
+        <ScanPreview />
+      </div>
+      <section className="connect-card">
         <span className="upload-icon"><KeyRound size={20} /></span>
         <h1>Connect to your workspace</h1>
         <p>Enter your workspace API key to upload and review bank statements.</p>
@@ -46,7 +50,9 @@ function Connect({ onConnect }: { onConnect: (key: string) => void }) {
           <label>Workspace API key<input type="password" value={key} onChange={(event) => setKey(event.target.value)}
             autoComplete="off" spellCheck={false} maxLength={128} required /></label>
           {error && <Alert>{error}</Alert>}
-          <button className="button primary" type="submit" disabled={!key.trim() || busy}>{busy ? "Connecting…" : "Connect"}</button>
+          <button className="button primary" type="submit" disabled={!key.trim() || busy}>
+            {busy ? "Connecting…" : "Connect"} <ArrowRight size={16} aria-hidden="true" />
+          </button>
         </form>
       </section>
     </div>
@@ -79,19 +85,14 @@ function Workspace({ api, disconnect }: { api: Client; disconnect: () => void })
           <Route path="/review" element={<Documents key="review" api={api} queue />} />
           <Route path="/documents/:id" element={<DetailRoute api={api} />} />
           <Route path="/evaluation" element={<Evaluation />} />
-          <Route path="/schema" element={<div className="content">
-            <header className="page-heading"><div><h1>Bank statement schema</h1><p>bank-statement-usd@1 · USD · en-US</p></div></header>
-            <section className="panel schema-panel"><h2>Statement fields</h2>
-              <dl><dt>Account ID</dt><dd>Alphanumeric or masked account identifier.</dd>
-                <dt>Period start and end</dt><dd>ISO dates. Source dates may use U.S. month/day/year format.</dd>
-                <dt>Opening and closing balances</dt><dd>Exact decimal amounts represented as strings.</dd></dl>
-              <h2>Transactions</h2><p>Each row requires a date, description, signed amount, and running balance.
-                Separate debit and credit columns are converted to a signed amount with both source regions retained.</p>
-              <h2>Export checks</h2><p>Required values need page evidence. Running balances and the statement total
-                must reconcile to the cent before export.</p>
+          <Route path="/schema" element={<Schema />} />
+          <Route path="*" element={<div className="content">
+            <section className="panel missing-page">
+              <span className="upload-icon"><FileQuestion size={23} /></span>
+              <h1>Page not found</h1>
+              <Link className="button primary" to="/"><ArrowLeft size={17} /> Back to documents</Link>
             </section>
           </div>} />
-          <Route path="*" element={<div className="content"><h1>Page not found</h1><Link to="/">Back to documents</Link></div>} />
         </Routes>
       </main>
     </div>

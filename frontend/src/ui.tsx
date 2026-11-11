@@ -1,4 +1,4 @@
-import { CircleAlert, LoaderCircle } from "lucide-react";
+import { CircleAlert, FileText, LoaderCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
 import type { DocumentStatus, FieldStatus } from "./api";
@@ -19,6 +19,29 @@ export function Alert({ children }: { children: ReactNode }) {
 
 export function Loading({ children = "Loading…" }: { children?: ReactNode }) {
   return <div className="loading" role="status"><LoaderCircle className="spin" size={18} />{children}</div>;
+}
+
+export function PageBanner({ title, description, icon }: {
+  title: string; description: string; icon: ReactNode;
+}) {
+  return <header className="page-banner">
+    <div>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+    <span className="banner-icon" aria-hidden="true">{icon}</span>
+  </header>;
+}
+
+export function ScanPreview() {
+  return <div className="scan-preview" aria-hidden="true">
+    <div className="scan-paper">
+      <div className="scan-paper-title"><FileText size={19} /><span /></div>
+      <div className="scan-paper-meta"><i /><i /></div>
+      <div className="scan-paper-rows"><i /><i /><i /><i /><i /></div>
+      <div className="scan-highlight" />
+    </div>
+  </div>;
 }
 
 export function displayDate(value: string) {

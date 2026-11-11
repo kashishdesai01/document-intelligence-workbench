@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, ScanLine } from "lucide-react";
-import { useEffect, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 
 import type { Box, Client, Field, Page } from "./api";
 import { Alert, label, Loading, message } from "./ui";
@@ -15,6 +15,7 @@ export function Viewer({ api, id, generation, page, count, fields, selected, dra
   const [error, setError] = useState("");
   const [start, setStart] = useState<Point>();
   const [current, setCurrent] = useState<Point>();
+  const stage = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -31,6 +32,18 @@ export function Viewer({ api, id, generation, page, count, fields, selected, dra
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [api, id, page, generation]);
+
+  useEffect(() => {
+    const container = stage.current;
+    if (!container || container.scrollHeight <= container.clientHeight || !selected || !data) return;
+    const evidence = container.querySelector("rect.evidence.selected");
+    if (!evidence) return;
+    const region = evidence.getBoundingClientRect();
+    const viewport = container.getBoundingClientRect();
+    if (region.top < viewport.top || region.bottom > viewport.bottom) {
+      container.scrollTop += (region.top + region.bottom - viewport.top - viewport.bottom) / 2;
+    }
+  }, [data, selected]);
 
   function point(event: PointerEvent<SVGSVGElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -72,11 +85,11 @@ export function Viewer({ api, id, generation, page, count, fields, selected, dra
         {data?.number === page && <span className="source-tag">{data.metadata.source === "ocr" ? "OCR scan" : "Native PDF"}</span>}</div>
       <div className="pagination">
         <button className="icon-button" aria-label="Previous page" onClick={() => go(page - 1)} disabled={page <= 1}><ChevronLeft size={18} /></button>
-        <span>{page} / {count}</span>
+        <span>Page {page} of {count}</span>
         <button className="icon-button" aria-label="Next page" onClick={() => go(page + 1)} disabled={page >= count}><ChevronRight size={18} /></button>
       </div>
     </header>
-    <div className="page-stage">
+    <div className="page-stage" ref={stage}>
       {error && <Alert>{error}</Alert>}
       {!error && data?.number !== page && <Loading>Loading page…</Loading>}
       {data?.number === page && <div className="page-image" style={{ aspectRatio: `${data.metadata.width} / ${data.metadata.height}` }}>
